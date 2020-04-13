@@ -94,4 +94,22 @@ router.get('/:id/comments', (req, res) => {
     })
 })
 
+router.delete('/:id', (req, res) => {
+    let post = db.findById(req.params.id);
+    if(!post) {
+        return res.status(404).json({
+            message: "The post with the specified ID does not exist"
+        })
+    }
+    db.remove(req.params.id)
+        .then(() => {
+            return res.status(204).end()
+        })
+        .catch(() => {
+            res.status(500).json({
+                error: "The post could not be removed"
+            })
+        })
+})
+
 module.exports = router;
