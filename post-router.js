@@ -39,11 +39,59 @@ router.post('/:id/comments', (req, res) => {
         .then(comment => {
             return res.status(201).json(comment)
         })
-        .catch(err => {
+        .catch(() => {
             return res.status(500).json({
                 error: "There was an error while saving the comment to the database"
             })
         })
+})
+
+router.get('/', (req, res) => {
+    db.find()
+        .then(posts => {
+            return res.status(200).json(posts)
+        })
+        .catch(() => {
+            return res.status(500).json({
+                error: "The posts information could not be retrieved"
+            })
+        })
+})
+
+router.get('/:id', (req, res) => {
+    let post = db.findById(req.params.id);
+    if(!post) {
+        return res.status(404).json({
+            message: "The post with the specified ID does not exist"
+        })
+    }
+    post
+        .then(post => {
+            return res.status(200).json(post)
+        })
+        .catch(() => {
+            res.status(500).json({
+                error: "The post information could not be retrieved"
+            })
+        })
+})
+
+router.get('/:id/comments', (req, res) => {
+    let post = db.findById(req.params.id);
+    if(!post) {
+        return res.status(404).json({
+            message: "The post with the specified ID does not exist"
+        })
+    }
+    db.findPostComments(req.params.id)
+    .then(comment => {
+        return res.status(200).json(comment)
+    })
+    .catch(() => {
+        res.status(500).json({
+            error: "The comments information could not be retrieved"
+        })
+    })
 })
 
 module.exports = router;
